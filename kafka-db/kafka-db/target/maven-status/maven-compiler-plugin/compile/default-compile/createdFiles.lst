@@ -1,0 +1,7 @@
+src\repository\SourcesTableRepository.class
+src\models\SourcesTable.class
+src\services\SourcesTableServiceImpl.class
+src\consumer\ConsumerKafka.class
+src\Main.class
+src\consumer\ConsumerDebezium.class
+src\producer\Producer.class
