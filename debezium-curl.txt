@@ -1,0 +1,44 @@
+Invoke-RestMethod -Uri "http://localhost:8083/connectors" -Method Post -Headers @{
+    "Content-Type" = "application/json"
+} -Body '{
+     "name": "postgres-connector",
+     "config": {
+         "connector.class": "io.debezium.connector.postgresql.PostgresConnector",
+         "database.hostname": "db",
+         "database.port": "5432",
+         "database.user": "postgres",
+         "database.password": "123456",
+         "database.dbname": "sources_table",
+         "database.server.name": "dbserver1",
+         "table.include.list": "source1.craft_market_wide,source2.craft_market_masters_products,source2.craft_market_orders_customers,source3.craft_market_craftsmans,source3.craft_market_customers,source3.craft_market_orders",
+         "plugin.name": "pgoutput",
+         "database.history.kafka.bootstrap.servers": "kafka:9092",
+         "database.history.kafka.topic": "schema-changes.sources_table",
+         "transforms": "unwrap",
+         "transforms.unwrap.type": "io.debezium.transforms.ExtractNewRecordState",
+         "transforms.unwrap.drop.tombstones": "false",
+         "transforms.unwrap.delete.handling.mode": "rewrite",
+         "value.converter": "org.apache.kafka.connect.json.JsonConverter",
+         "value.converter.schemas.enable": "false",
+         "key.converter": "org.apache.kafka.connect.json.JsonConverter",
+         "key.converter.schemas.enable": "false"
+     }
+ }'
+
+Invoke-RestMethod -Uri "http://localhost:8083/connectors/postgres-connector" -Method Delete
+
+
+
+PS C:\Users\Polina\IdeaProjects\диплом> docker exec -it kafka-db-db-1 bash
+root@c3cffc9538e3:/# sed -i "s/^#*wal_level.*/wal_level = logical/" /var/lib/postgresql/data/postgresql.conf
+root@c3cffc9538e3:/# sed -i "s/^#*max_replication_slots.*/max_replication_slots = 4/" /var/lib/postgresql/data/postgresql.conf
+root@c3cffc9538e3:/# sed -i "s/^#*max_wal_senders.*/max_wal_senders = 4/" /var/lib/postgresql/data/postgresql.conf
+PS C:\Users\Polina\IdeaProjects\диплом\kafka-db> docker-compose restart db
+
+
+mvn clean install -DskipTests
+
+docker build -t springboot-docker-app:1 .
+docker run -p 8080:8080 springboot-docker-app:1
+
+docker-compose build --no-cache
