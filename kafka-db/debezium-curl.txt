@@ -28,7 +28,6 @@ Invoke-RestMethod -Uri "http://localhost:8083/connectors" -Method Post -Headers 
 Invoke-RestMethod -Uri "http://localhost:8083/connectors/postgres-connector" -Method Delete
 
 
-
 PS C:\Users\Polina\IdeaProjects\диплом> docker exec -it kafka-db-db-1 bash
 root@c3cffc9538e3:/# sed -i "s/^#*wal_level.*/wal_level = logical/" /var/lib/postgresql/data/postgresql.conf
 root@c3cffc9538e3:/# sed -i "s/^#*max_replication_slots.*/max_replication_slots = 4/" /var/lib/postgresql/data/postgresql.conf
